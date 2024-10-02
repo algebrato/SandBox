@@ -1,0 +1,126 @@
+set(MN_MEDIA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+if(WIN32)
+set(MN_MEDIA_ARTIFACTS_DIR "${CMAKE_SOURCE_DIR}/LocalArtifactDir/artifacts")
+else()
+set(MN_MEDIA_ARTIFACTS_DIR "${CMAKE_SOURCE_DIR}/LocalArtifactDir/artifacts_linux")
+endif()
+
+set(MN_MEDIA_LIB mn-media)
+
+set(MN_MEDIA_EXPORT_HEADER_BASE_NAME mn-media)
+set(MN_MEDIA_NO_EXPORT_DEFINE MN_MEDIA_LIBRARY_NO_EXPORT)
+
+file(GLOB_RECURSE MN_MEDIA_HEADERS MN_MEDIA_SOURCES ${MN_MEDIA_INCLUDE_DIR}/*.h ${MN_MEDIA_INCLUDE_DIR}/*.cpp)
+
+set (CMAKE_LIBRARY_ARCHITECTURE "x64")
+set (CMAKE_BUILD_TYPE "Debug")
+
+add_library(${MN_MEDIA_LIB} STATIC ${MN_MEDIA_HEADERS} ${MN_MEDIA_SOURCES})
+if(WIN32)
+  set(OPENSSL_STATIC_ARTIFACTS_DIR "${MN_MEDIA_ARTIFACTS_DIR}/OpenSSL/${CMAKE_LIBRARY_ARCHITECTURE}/${CMAKE_BUILD_TYPE}MT")
+  set_target_properties(${MN_MEDIA_LIB} PROPERTIES CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set_target_properties(${MN_MEDIA_LIB} PROPERTIES CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+else()
+  set(OPENSSL_STATIC_ARTIFACTS_DIR "${MN_MEDIA_ARTIFACTS_DIR}/OpenSSL_${label}/${CMAKE_BUILD_TYPE}")
+endif()
+
+<<<<<<< HEAD
+set_target_properties(${MN_MEDIA_LIB} PROPERTIES COMPILE_FLAGS "-D${MN_MEDIA_NO_EXPORT_DEFINE}")
+
+=======
+add_library(${MN_MEDIA_SHARED_LIB} SHARED ${MN_MEDIA_HEADERS} ${MN_MEDIA_SOURCES})
+set_target_properties(${MN_MEDIA_SHARED_LIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(${MN_MEDIA_SHARED_LIB} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${MN_MEDIA_SHARED_LIB} PROPERTIES CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+if(WIN32)
+  set(OPENSSL_SHARED_ARTIFACTS_DIR "${MN_MEDIA_ARTIFACTS_DIR}/OpenSSL/${CMAKE_LIBRARY_ARCHITECTURE}/${CMAKE_BUILD_TYPE}MD")
+  set_target_properties(${MN_MEDIA_SHARED_LIB} PROPERTIES CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+  set_target_properties(${MN_MEDIA_SHARED_LIB} PROPERTIES CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+else()
+  set(OPENSSL_SHARED_ARTIFACTS_DIR "${MN_MEDIA_ARTIFACTS_DIR}/OpenSSL_${label}/${CMAKE_BUILD_TYPE}")
+endif()
+
+if(WIN32)
+  set(OPENSSL_LIB_DIR lib)
+else()
+  string(SUBSTRING ${platform} 1 -1 OPENSSL_LIB_DIR)
+  set(OPENSSL_LIB_DIR lib${OPENSSL_LIB_DIR})
+endif()
+
+generate_export_header(${MN_MEDIA_SHARED_LIB}
+  BASE_NAME ${MN_MEDIA_EXPORT_HEADER_BASE_NAME}
+  STATIC_DEFINE ${MN_MEDIA_NO_EXPORT_DEFINE})
+
+set_target_properties(${MN_MEDIA_LIB} PROPERTIES COMPILE_FLAGS "-D${MN_MEDIA_NO_EXPORT_DEFINE}")
+
+set_property(TARGET ${MN_MEDIA_LIB} ${MN_MEDIA_SHARED_LIB}
+  PROPERTY MN_MEDIA_PUBLIC_HEADERS
+  ${MN_MEDIA_INCLUDE_DIR}/IO/FileStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/IInputStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/IObjectInputStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/IOutputStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/IStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/SSLSocketStream.h
+  ${MN_MEDIA_INCLUDE_DIR}/IO/StreamTypes.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPAudioFrame.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPAuxiliaryDataFrame.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPFrame.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPFrameType.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPTextFrame.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/QADPVideoFrame.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPAudioConfigurationMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPDriveSerialNumberMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPImageAspectRatioMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPImageEnhancementsMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPImageTransformsMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPLensConfigurationMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPMetadataPacketType.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPMetadataPackets.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPPrivacyPatchLocation.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPPrivacyPatchMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPPrivacyPatchType.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPSeprobanMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPStreamChannelBusyStatus.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPStreamChannelImageSlicingType.h
+  ${MN_MEDIA_INCLUDE_DIR}/Protocol/QADP/Metadata/QADPStreamChannelStatusMetadataPacket.h
+  ${MN_MEDIA_INCLUDE_DIR}/Services/IMediaFrameReader.h
+  ${MN_MEDIA_INCLUDE_DIR}/Services/MediaFrameReaderFactory.h)
+
+target_include_directories(${MN_MEDIA_SHARED_LIB} PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/Logger"
+  "${OPENSSL_SHARED_ARTIFACTS_DIR}/include"
+  "${CMAKE_BINARY_DIR}/Media")
+
+>>>>>>> b03e02df34af0e370e3a232db90141fd74f4617f
+target_include_directories(${MN_MEDIA_LIB} PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../MediaWrapper"
+  "${CMAKE_SOURCE_DIR}/Logger"
+  "${OPENSSL_STATIC_ARTIFACTS_DIR}/include"
+  "${CMAKE_BINARY_DIR}/Media")
+
+<<<<<<< HEAD
+=======
+target_link_directories(${MN_MEDIA_SHARED_LIB} PUBLIC
+  "${OPENSSL_SHARED_ARTIFACTS_DIR}/${OPENSSL_LIB_DIR}")
+
+>>>>>>> b03e02df34af0e370e3a232db90141fd74f4617f
+target_link_directories(${MN_MEDIA_LIB} PUBLIC
+  "${OPENSSL_STATIC_ARTIFACTS_DIR}/${OPENSSL_LIB_DIR}")
+
+if (WIN32)
+set(OPENSSL_STATIC_LIBS libcrypto_static.lib libssl_static.lib)
+set(OPENSSL_SHARED_LIBS libcrypto.lib libssl.lib)
+set(SYSTEM_LIBS Ws2_32.lib)
+else()
+set(OPENSSL_STATIC_LIBS crypto ssl)
+set(OPENSSL_SHARED_LIBS crypto ssl)
+set(SYSTEM_LIBS pthread)
+endif()
+
+target_link_libraries(${MN_MEDIA_LIB} PUBLIC ${SYSTEM_LIBS} ${OPENSSL_STATIC_LIBS} media_wrap)
+target_sources(${MN_MEDIA_LIB} PUBLIC FILE_SET HEADERS FILES $<TARGET_PROPERTY:MN_MEDIA_PUBLIC_HEADERS>)
+
+add_subdirectory(Decoder)

@@ -1,0 +1,33 @@
+set (FFMPEGWRAP media_wrap)
+set (FFMPEGWRAP_LIB_STATIC media_wrap_static)
+
+file (GLOB FFMPEGWRAP_INCS FFMPEGWRAP_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+)
+
+add_library(${FFMPEGWRAP} OBJECT ${FFMPEGWRAP_INCS} ${FFMPEGWRAP_SRC})
+
+
+message(STATUS "LIBAV_INCLUDE_DIRS: ${LIBAV_INCLUDE_DIRS}")
+target_include_directories(${FFMPEGWRAP}  PUBLIC
+    "/home/algebrato/repositories/build/ffmpeg/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Logger"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${LIBAV_INCLUDE_DIRS}"
+)
+
+
+set_property(TARGET ${FFMPEGWRAP} PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+add_library(${FFMPEGWRAP_LIB_STATIC} STATIC  $<TARGET_OBJECTS:${FFMPEGWRAP}>)
+target_link_directories(${FFMPEGWRAP_LIB_STATIC} PRIVATE "/home/algebrato/repositories/build/ffmpeg/lib")
+
+target_link_libraries(${FFMPEGWRAP_LIB_STATIC} PRIVATE avcodec avformat avutil mn-media)
+set_target_properties(${FFMPEGWRAP_LIB_STATIC} PROPERTIES OUTPUT_NAME ${FFMPEGWRAP})
+
+
+install(TARGETS ${FFMPEGWRAP_LIB_STATIC} DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib")
+install(TARGETS ${FFMPEGWRAP_LIB_SHARED} DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin")
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/include")
+FILE(COPY MediaWrapper.h DESTINATION ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
