@@ -1,6 +1,6 @@
-FROM emscripten/emsdk:3.1.63 as build
+FROM emscripten/emsdk:3.1.6 as build
 
-ARG FFMPEG_VERSION=4.0.4
+ARG FFMPEG_VERSION=5.1.5
 
 ARG PREFIX=/opt/ffmpeg
 ARG MAKEFLAGS="-j4"

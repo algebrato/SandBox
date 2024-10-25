@@ -11,17 +11,16 @@ add_library(${FFMPEGWRAP} OBJECT ${FFMPEGWRAP_INCS} ${FFMPEGWRAP_SRC})
 
 message(STATUS "LIBAV_INCLUDE_DIRS: ${LIBAV_INCLUDE_DIRS}")
 target_include_directories(${FFMPEGWRAP}  PUBLIC
-    "/home/algebrato/repositories/build/ffmpeg/include"
+    "${FFMPEG_INCLUDES}" 
     "${CMAKE_CURRENT_SOURCE_DIR}/../Logger"
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${LIBAV_INCLUDE_DIRS}"
 )
 
 
 set_property(TARGET ${FFMPEGWRAP} PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 add_library(${FFMPEGWRAP_LIB_STATIC} STATIC  $<TARGET_OBJECTS:${FFMPEGWRAP}>)
-target_link_directories(${FFMPEGWRAP_LIB_STATIC} PRIVATE "/home/algebrato/repositories/build/ffmpeg/lib")
+target_link_directories(${FFMPEGWRAP_LIB_STATIC} PRIVATE ${FFMPEG_LIBS})
 
 target_link_libraries(${FFMPEGWRAP_LIB_STATIC} PRIVATE avcodec avformat avutil mn-media)
 set_target_properties(${FFMPEGWRAP_LIB_STATIC} PROPERTIES OUTPUT_NAME ${FFMPEGWRAP})
